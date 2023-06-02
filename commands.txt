@@ -1,0 +1,108 @@
+
+# create users
+from django.contrib.auth.models import User
+User.objects.create_user('username')
+User.objects.create_user('dany')
+
+# create author
+from news.models import Author
+
+author_username = Author()
+author_username.user = User.objects.get(id=3)
+author_username.save()
+
+author_dany = Author()
+author_dany.user = User.objects.get(id=4)
+author_dany.save()
+
+# create categories
+from news.models import Category
+Category.objects.create(name_category = 'спорт')
+Category.objects.create(name_category = 'образование')
+Category.objects.create(name_category = 'культура')
+Category.objects.create(name_category = 'политика')
+
+# create content
+from datetime import datetime
+from news.models import Post
+from news.models import ContentType
+
+news1 = Post.objects.create(author = author_username,
+                    content_type=ContentType.NEWS,
+                    data = datetime.now(),
+                    content_header = 'Это станет унижением. США недооценили потенциал России, пишут СМИ',
+                    content_text = 'Выбранная Соединенным Штатами и союзниками тактика, отметил Ху Сицзинь, приводит к новым проблемам, им оказалось гораздо сложнее, чем ожидалось, победить Россию.',
+                    )
+news1.save()
+news1.category.add(Category.objects.get(name_category='политика'))
+news1.category.add(Category.objects.get(name_category='спорт'))
+news1.save()
+
+news2 = Post.objects.create(author = author_username,
+                    content_type=ContentType.NEWS,
+                    data = datetime.now(),
+                    content_header = 'Обессиливший волк с канистрой на голове попал на фото и это его спасло',
+                    content_text = 'Человек, к сожалению, загрязняет окружающую среду продуктами своей жизнедеятельности. Главная проблема это пластик. Из за него часто животные попадают в беду. Вот и тут волк решил полакомиться остатками пищи и застрял в канистре.',
+                    )
+news2.save()
+news2.category.add(Category.objects.get(name_category='культура'))
+news2.save()
+
+article = Post.objects.create(author = author_dany,
+                    content_type=ContentType.ARTICLE,
+                    data = datetime.now(),
+                    content_header = 'Почему Python — плохой выбор для первого языка программирования?',
+                    content_text = 'Есть другие языки, более низкого уровня, которые помогут вам понять глубину, понять базу, понять структуру, снять розовые очки, убрать синтаксический сахар и как следует подумать над теми вещами, которые ранее вы принимали как должное. Какой из этого вывод? Если вы хотите научиться думать, по-настоящему понимать как работает железо, то лучше начать с низкого уровня. Поэтому полезнее будет начать с Assembler или C.',
+                    )
+article.save()
+article.category.add(Category.objects.get(name_category='культура'))
+article.save()
+
+
+# create comments
+from news.models import Comment
+
+Comment.objects.create(post = Post.objects.get(id=1),
+                       user = User.objects.get(id=4),
+                       text_comment = 'hello',
+                       datatime = datetime.now()
+                       )
+Comment.objects.create(post = Post.objects.get(id=9),
+                       user = User.objects.get(id=1),
+                       text_comment = 'hey',
+                       datatime = datetime.now()
+                       )
+Comment.objects.create(post = Post.objects.get(id=10),
+                       user = User.objects.get(id=2),
+                       text_comment = 'damn',
+                       datatime = datetime.now()
+                       )
+Comment.objects.create(post = Post.objects.get(id=8),
+                       user = User.objects.get(id=3),
+                       text_comment = 'nihao',
+                       datatime = datetime.now()
+                       )
+
+# edit comments rating
+comment = Comment.objects.get(id=8)
+comment.like()
+comment.save()
+comment2 = Comment.objects.get(id=9)
+comment2.dislike()
+comment2.save()
+
+# refresh user rating
+author = Author.objects.get(id=1)
+author.update_rating()
+author.save()
+author = Author.objects.get(id=2)
+author.update_rating()
+author.save()
+author = Author.objects.get(id=3)
+author.update_rating()
+author.save()
+author = Author.objects.get(id=4)
+author.update_rating()
+author.save()
+# username and rating
+User.objects.get(username='username')
